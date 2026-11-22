@@ -1,0 +1,129 @@
+<Window x:Class="AcrylicUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:AcrylicUI"
+        xmlns:views="clr-namespace:AcrylicUI.Views"
+        Title="Acrylic DNS Proxy" Icon="Assets/Acrylic.ico"
+        Width="1120" Height="760" MinWidth="1000" MinHeight="600"
+        Background="{DynamicResource WindowBrush}" Foreground="{DynamicResource TextBrush}"
+        FontFamily="Segoe UI" FontSize="13" UseLayoutRounding="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header: what Acrylic is doing right now, and the buttons to change that. -->
+
+        <Border Grid.Row="0" Background="{DynamicResource CardBrush}" Padding="16,10">
+            <DockPanel LastChildFill="False">
+
+                <Image DockPanel.Dock="Left" Source="Assets/Acrylic.ico" Width="32" Height="32" Margin="0,0,11,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
+
+                <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <TextBlock Text="Acrylic DNS Proxy" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock x:Name="VersionText" Foreground="{DynamicResource SubtleBrush}" FontSize="12" />
+                </StackPanel>
+
+                <Button x:Name="MoreButton" DockPanel.Dock="Right" Style="{StaticResource GhostButton}" ui:Look.Glyph="&#xE712;" ToolTip="More actions" Click="MoreButton_Click" Margin="6,0,0,0" MinWidth="34" AutomationProperties.Name="More actions">
+                    <Button.ContextMenu>
+                        <ContextMenu x:Name="MoreMenu">
+                            <MenuItem x:Name="InstallMenuItem" Header="_Install Acrylic service" Click="Install_Click" />
+                            <MenuItem x:Name="UninstallMenuItem" Header="_Uninstall Acrylic service" Click="Uninstall_Click" />
+                            <Separator x:Name="InstallSeparator" />
+                            <MenuItem x:Name="PurgeMenuItem" Header="_Purge Acrylic cache data..." Click="Purge_Click" />
+                            <Separator />
+                            <MenuItem x:Name="ActivateDebugLogMenuItem" Header="A_ctivate Acrylic debug log" Click="ActivateDebugLog_Click" />
+                            <MenuItem x:Name="DeactivateDebugLogMenuItem" Header="D_eactivate Acrylic debug log" Click="DeactivateDebugLog_Click" />
+                            <MenuItem x:Name="ViewDebugLogMenuItem" Header="View current Acrylic de_bug log" Click="ViewDebugLog_Click" />
+                            <Separator />
+                            <MenuItem Header="Open Acrylic _folder in File Explorer" Click="OpenFolder_Click" />
+                            <Separator />
+                            <MenuItem Header="Appea_rance">
+                                <MenuItem x:Name="ThemeLightMenuItem" Header="_Light" IsCheckable="True" Click="ThemeLight_Click" />
+                                <MenuItem x:Name="ThemeDarkMenuItem" Header="_Dark" IsCheckable="True" Click="ThemeDark_Click" />
+                                <MenuItem x:Name="ThemeSystemMenuItem" Header="_Same as Windows" IsCheckable="True" Click="ThemeSystem_Click" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="_RegEx tester..." Click="RegExTester_Click" />
+                            <MenuItem Header="_Domain name affinity mask tester..." Click="AffinityMaskTester_Click" />
+                            <Separator />
+                            <MenuItem Header="Acrylic _home page" Click="HomePage_Click" />
+                            <MenuItem Header="_About Acrylic" Click="About_Click" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+                <Button x:Name="ThemeButton" DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Click="ThemeButton_Click" Margin="6,0,0,0" MinWidth="34" />
+
+                <Button x:Name="RestartButton" DockPanel.Dock="Right" Content="Restart" ui:Look.Glyph="&#xE72C;" Click="Restart_Click" Margin="6,0,0,0" ToolTip="Stops and starts Acrylic, which makes it read its configuration and hosts files again" />
+                <Button x:Name="StopButton" DockPanel.Dock="Right" Content="Stop" ui:Look.Glyph="&#xE71A;" Click="Stop_Click" Margin="6,0,0,0" />
+                <Button x:Name="StartButton" DockPanel.Dock="Right" Content="Start" ui:Look.Glyph="&#xE768;" Click="Start_Click" Margin="6,0,0,0" />
+                <Button x:Name="InstallButton" DockPanel.Dock="Right" Content="Install service" Style="{StaticResource PrimaryButton}" Click="Install_Click" Margin="6,0,0,0" Visibility="Collapsed" />
+
+                <Border x:Name="StateChip" DockPanel.Dock="Right" Style="{StaticResource Chip}" Margin="0,0,10,0" Padding="10,4,12,5" CornerRadius="13">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="StateDot" Width="8" Height="8" Margin="0,1,7,0" VerticalAlignment="Center" />
+                        <TextBlock x:Name="StateText" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+
+            </DockPanel>
+        </Border>
+
+        <!-- Shown only in sandbox mode. -->
+
+        <Border x:Name="SandboxBanner" Grid.Row="1" Background="{DynamicResource AmberSoftBrush}" BorderBrush="{DynamicResource AmberLineBrush}" BorderThickness="0,1" Padding="16,7" Visibility="Collapsed">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Style="{StaticResource Glyph}" Text="&#xE946;" Foreground="{DynamicResource AmberBrush}" Margin="0,0,9,0" />
+                <TextBlock x:Name="SandboxText" Foreground="{DynamicResource AmberBrush}" TextWrapping="Wrap" TextTrimming="None" />
+            </DockPanel>
+        </Border>
+
+        <!-- Shown after a save, while Acrylic still runs with the previous content of the file. -->
+
+        <Border x:Name="RestartBanner" Grid.Row="2" Background="{DynamicResource AccentSoftBrush}" BorderBrush="{DynamicResource AccentLineBrush}" BorderThickness="0,1" Padding="16,6" Visibility="Collapsed">
+            <DockPanel LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left" Style="{StaticResource Glyph}" Text="&#xE72C;" Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,9,0" />
+                <TextBlock x:Name="RestartBannerText" DockPanel.Dock="Left" VerticalAlignment="Center" Foreground="{DynamicResource AccentTextBrush}" />
+                <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Later" Click="RestartLater_Click" Margin="6,0,0,0" />
+                <Button x:Name="RestartNowButton" DockPanel.Dock="Right" Style="{StaticResource PrimaryButton}" Content="Restart now" Click="Restart_Click" />
+            </DockPanel>
+        </Border>
+
+        <TabControl x:Name="Tabs" Grid.Row="3" Style="{StaticResource MainTabControl}" SelectionChanged="Tabs_SelectionChanged">
+            <TabItem x:Name="ConfigurationTab" Style="{StaticResource MainTabItem}" Header="Configuration" AutomationProperties.AutomationId="ConfigurationTab">
+                <views:ConfigurationView x:Name="ConfigurationPage" />
+            </TabItem>
+            <TabItem x:Name="HostsTab" Style="{StaticResource MainTabItem}" Header="Hosts" AutomationProperties.AutomationId="HostsTab">
+                <views:HostsView x:Name="HostsPage" />
+            </TabItem>
+            <TabItem x:Name="CacheTab" Style="{StaticResource MainTabItem}" Header="Cache" AutomationProperties.AutomationId="CacheTab">
+                <views:CacheView x:Name="CachePage" />
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="4" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0" Padding="16,5">
+            <TextBlock x:Name="StatusText" Foreground="{DynamicResource SubtleBrush}" FontSize="12" />
+        </Border>
+
+        <!-- Covers the window while Acrylic is being stopped or started. -->
+
+        <Grid x:Name="BusyOverlay" Grid.Row="0" Grid.RowSpan="5" Background="{DynamicResource OverlayBrush}" Visibility="Collapsed">
+            <Border Style="{StaticResource Card}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="26,20" MinWidth="340">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.18" />
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock x:Name="BusyText" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" TextTrimming="None" />
+                    <ProgressBar IsIndeterminate="True" Height="4" Margin="0,14,0,0" BorderThickness="0" Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource GraySoftBrush}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>

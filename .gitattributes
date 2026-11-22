@@ -1,0 +1,3 @@
+# Every file is stored exactly as it is: the tests check that the files Acrylic is distributed with survive a load and
+# save byte for byte, Windows line terminators included.
+* -text

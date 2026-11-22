@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Acrylic DNS Proxy UI.
+
+    Targets .NET Framework 4.7.2, which ships with Windows 10 (1803 and later) and Windows 11, so the resulting
+    AcrylicUI.exe is a single small file that needs no runtime to be installed and has no NuGet dependencies.
+
+    When the project sits inside the Acrylic source tree the version number and the release date are read from
+    ..\AcrylicVersionInfo.pas, so that they are defined in one place. On its own the project uses the ones written below,
+    which a test keeps equal to those of the source tree.
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AcrylicUI</AssemblyName>
+    <RootNamespace>AcrylicUI</RootNamespace>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationIcon>Assets\Acrylic.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateSupportedRuntime>false</GenerateSupportedRuntime>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Prefer32Bit>false</Prefer32Bit>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)..\AcrylicVersionInfo.pas')">
+    <AcrylicVersionInfoText>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\AcrylicVersionInfo.pas'))</AcrylicVersionInfoText>
+    <AcrylicVersionNumber>$([System.Text.RegularExpressions.Regex]::Match($(AcrylicVersionInfoText), `AcrylicVersionNumber\s*=\s*'([^']*)'`).Groups[1].Value)</AcrylicVersionNumber>
+    <AcrylicReleaseDate>$([System.Text.RegularExpressions.Regex]::Match($(AcrylicVersionInfoText), `AcrylicReleaseDate\s*=\s*'([^']*)'`).Groups[1].Value)</AcrylicReleaseDate>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AcrylicVersionNumber Condition="'$(AcrylicVersionNumber)' == ''">2.2.1</AcrylicVersionNumber>
+    <AcrylicReleaseDate Condition="'$(AcrylicReleaseDate)' == ''">February 12, 2025</AcrylicReleaseDate>
+    <Version>$(AcrylicVersionNumber)</Version>
+    <Product>Acrylic DNS Proxy</Product>
+    <AssemblyTitle>Acrylic DNS Proxy UI</AssemblyTitle>
+    <Description>Acrylic DNS Proxy UI</Description>
+    <Company></Company>
+    <Copyright></Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>AcrylicReleaseDate</_Parameter1>
+      <_Parameter2>$(AcrylicReleaseDate)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ServiceProcess" />
+    <Resource Include="Assets\Acrylic.ico" />
+  </ItemGroup>
+
+</Project>

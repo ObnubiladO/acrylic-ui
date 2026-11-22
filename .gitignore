@@ -1,0 +1,14 @@
+# This repository holds the new Acrylic UI only. The working folder it comes from is the Acrylic source tree, of which
+# nothing else is tracked: everything at the top level is ignored except what is listed here.
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/License.txt
+!/AcrylicUI/
+!/AcrylicUI.Tests/
+!/Screenshots/
+
+# Build outputs
+bin/
+obj/

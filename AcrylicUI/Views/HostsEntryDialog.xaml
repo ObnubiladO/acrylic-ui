@@ -1,0 +1,122 @@
+<Window x:Class="AcrylicUI.Views.HostsEntryDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:AcrylicUI"
+        Title="Add an entry" Width="640" SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource WindowBrush}" Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="13" UseLayoutRounding="True">
+
+    <Window.Resources>
+        <Style x:Key="Choice" TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
+            <Setter Property="Margin" Value="0,0,0,7" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="GroupName" Value="Kind" />
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,14,0,5" />
+        </Style>
+    </Window.Resources>
+
+    <StackPanel Margin="20,16,20,18">
+
+        <!-- What the line does -->
+
+        <StackPanel x:Name="KindPanel">
+            <TextBlock Text="What should Acrylic do?" FontWeight="SemiBold" Margin="0,0,0,8" />
+            <RadioButton x:Name="AnswerChoice" Style="{StaticResource Choice}" Checked="Kind_Changed" AutomationProperties.Name="Answer with an IP address">
+                <TextBlock TextWrapping="Wrap" TextTrimming="None"><Run Text="Answer with an IP address" /><Run Text="  -  the same way the Windows HOSTS file does" Foreground="{DynamicResource SubtleBrush}" /></TextBlock>
+            </RadioButton>
+            <RadioButton x:Name="BlockChoice" Style="{StaticResource Choice}" Checked="Kind_Changed" AutomationProperties.Name="Block">
+                <TextBlock TextWrapping="Wrap" TextTrimming="None"><Run Text="Block" /><Run Text="  -  answer that the domain name does not exist (NXDOMAIN)" Foreground="{DynamicResource SubtleBrush}" /></TextBlock>
+            </RadioButton>
+            <RadioButton x:Name="ForwardChoice" Style="{StaticResource Choice}" Checked="Kind_Changed" AutomationProperties.Name="Forward">
+                <TextBlock TextWrapping="Wrap" TextTrimming="None"><Run Text="Forward" /><Run Text="  -  always ask your DNS servers: an exception to the other entries, evaluated before them" Foreground="{DynamicResource SubtleBrush}" /></TextBlock>
+            </RadioButton>
+            <RadioButton x:Name="IncludeChoice" Style="{StaticResource Choice}" Checked="Kind_Changed" AutomationProperties.Name="Include another hosts file">
+                <TextBlock TextWrapping="Wrap" TextTrimming="None"><Run Text="Include another hosts file" /><Run Text="  -  to keep entries coming from different sources apart" Foreground="{DynamicResource SubtleBrush}" /></TextBlock>
+            </RadioButton>
+        </StackPanel>
+
+        <!-- A comment line has just its text. -->
+
+        <StackPanel x:Name="CommentOnlyPanel" Visibility="Collapsed">
+            <TextBlock Text="Comment" FontWeight="SemiBold" Margin="0,0,0,5" />
+            <TextBox x:Name="CommentOnlyBox" TextChanged="Input_Changed" AutomationProperties.Name="Comment text" />
+        </StackPanel>
+
+        <StackPanel x:Name="AddressPanel">
+            <TextBlock Text="IP address" Style="{StaticResource FieldLabel}" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="AddressBox" Width="290" FontFamily="{StaticResource MonoFont}" ui:Look.Placeholder="IPv4 or IPv6 address" TextChanged="Input_Changed" AutomationProperties.Name="IP address" />
+                <Button Content="127.0.0.1" Style="{StaticResource GhostButton}" FontFamily="{StaticResource MonoFont}" Margin="8,0,0,0" Click="QuickAddress_Click" ToolTip="This computer (IPv4)" />
+                <Button Content="0.0.0.0" Style="{StaticResource GhostButton}" FontFamily="{StaticResource MonoFont}" Click="QuickAddress_Click" ToolTip="Nowhere: a common way to make a name unreachable" />
+                <Button Content="::1" Style="{StaticResource GhostButton}" FontFamily="{StaticResource MonoFont}" Click="QuickAddress_Click" ToolTip="This computer (IPv6)" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="HostsPanel">
+            <TextBlock Text="Domain names" Style="{StaticResource FieldLabel}" />
+            <TextBox x:Name="HostsBox" Height="96" FontFamily="{StaticResource MonoFont}" AcceptsReturn="True" TextWrapping="NoWrap" VerticalContentAlignment="Top" Padding="7,6" VerticalScrollBarVisibility="Auto" TextChanged="Input_Changed" AutomationProperties.Name="Domain names" />
+            <TextBlock Style="{StaticResource Subtle}" FontSize="12" Margin="0,4,0,0" Text="One per line, or separated by spaces." />
+
+            <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="6" Padding="12,8" Margin="0,10,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="176" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="Margin" Value="0,2" />
+                            <Setter Property="Foreground" Value="{DynamicResource SubtleBrush}" />
+                            <Setter Property="TextWrapping" Value="Wrap" />
+                        </Style>
+                    </Grid.Resources>
+                    <TextBlock Grid.Row="0" Text="www.example.com" FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextBrush}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="exactly this domain name" />
+                    <TextBlock Grid.Row="1" Text="ad.*   ad?.example.com" FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextBrush}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="wildcards: * matches zero or more characters, ? exactly one" />
+                    <TextBlock Grid.Row="2" Text="&gt;example.com" FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextBrush}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="example.com and every domain name ending with .example.com" />
+                    <TextBlock Grid.Row="3" Text="/^ads?\..*$" FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextBrush}" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="a regular expression: starts with / and has no final /" />
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <StackPanel x:Name="FilePanel" Visibility="Collapsed">
+            <TextBlock Text="File name" Style="{StaticResource FieldLabel}" />
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Browse..." Margin="8,0,0,0" Click="Browse_Click" />
+                <TextBox x:Name="FileBox" FontFamily="{StaticResource MonoFont}" ui:Look.Placeholder="AcrylicHostsGroup1.txt" TextChanged="Input_Changed" AutomationProperties.Name="File name" />
+            </DockPanel>
+            <TextBlock Style="{StaticResource Subtle}" FontSize="12" Margin="0,4,0,0" TextTrimming="None" Text="A file name alone refers to the Acrylic folder; an absolute path can be used too. The file has the same format as AcrylicHosts.txt." />
+        </StackPanel>
+
+        <StackPanel x:Name="CommentPanel">
+            <TextBlock Text="Comment (optional)" Style="{StaticResource FieldLabel}" />
+            <TextBox x:Name="CommentBox" TextChanged="Input_Changed" AutomationProperties.Name="Comment" />
+        </StackPanel>
+
+        <CheckBox x:Name="EnabledBox" Content="Switched on" IsChecked="True" Margin="0,14,0,0" Checked="Input_Changed" Unchecked="Input_Changed" ToolTip="A switched off entry stays in the file with a # right in front of it, and Acrylic ignores it" />
+
+        <!-- The line as it will be written, or what prevents it -->
+
+        <Border x:Name="PreviewPanel" CornerRadius="6" Padding="12,8" Margin="0,16,0,0" Background="{DynamicResource GraySoftBrush}">
+            <StackPanel>
+                <TextBlock x:Name="PreviewCaption" FontSize="11" Foreground="{DynamicResource SubtleBrush}" Text="LINE WRITTEN TO THE FILE" />
+                <TextBlock x:Name="PreviewText" FontFamily="{StaticResource MonoFont}" TextWrapping="Wrap" TextTrimming="None" Margin="0,3,0,0" />
+            </StackPanel>
+        </Border>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+            <Button Content="Cancel" IsCancel="True" MinWidth="88" />
+            <Button x:Name="OkButton" Content="Add" Style="{StaticResource PrimaryButton}" IsDefault="True" MinWidth="88" Margin="8,0,0,0" Click="Ok_Click" />
+        </StackPanel>
+
+    </StackPanel>
+</Window>

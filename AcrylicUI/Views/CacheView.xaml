@@ -1,0 +1,146 @@
+<UserControl x:Class="AcrylicUI.Views.CacheView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:AcrylicUI">
+    <Grid Margin="16,12,16,12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="304" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border x:Name="NoticePanel" Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource AmberSoftBrush}" BorderBrush="{DynamicResource AmberLineBrush}" BorderThickness="1" CornerRadius="6" Padding="12,7" Margin="0,0,0,10" Visibility="Collapsed">
+            <TextBlock x:Name="NoticeText" Foreground="{DynamicResource AmberBrush}" TextWrapping="Wrap" TextTrimming="None" />
+        </Border>
+
+        <!-- What is in the cache -->
+
+        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Card}" ClipToBounds="True" Margin="0,0,14,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="12,10,10,8">
+                    <Button x:Name="PurgeButton" DockPanel.Dock="Right" Style="{StaticResource DangerButton}" Content="Purge everything..." Click="Purge_Click" Margin="6,0,0,0" ToolTip="Empties the whole address cache" />
+                    <Button x:Name="RefreshButton" DockPanel.Dock="Right" Content="Update the list" ui:Look.Glyph="&#xE72C;" Click="Refresh_Click" Margin="10,0,0,0" />
+                    <Grid MaxWidth="300" HorizontalAlignment="Left">
+                        <TextBox x:Name="SearchBox" Width="300" Padding="30,0,7,0" ui:Look.Placeholder="Filter (Ctrl+F)" TextChanged="SearchBox_TextChanged" AutomationProperties.Name="Filter the domain names" />
+                        <TextBlock Style="{StaticResource Glyph}" Text="&#xE721;" Foreground="{DynamicResource FaintBrush}" Margin="10,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Left" />
+                    </Grid>
+                </DockPanel>
+
+                <Border Grid.Row="1" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1" Padding="12,7">
+                    <TextBlock x:Name="SnapshotText" Style="{StaticResource Subtle}" FontSize="12" TextTrimming="None" />
+                </Border>
+
+                <ListView x:Name="DomainList" Grid.Row="2" Style="{StaticResource Table}" SelectionMode="Extended" SelectionChanged="DomainList_SelectionChanged" PreviewKeyDown="DomainList_PreviewKeyDown" AutomationProperties.Name="Cached domain names">
+                    <ListView.View>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource TableHeader}" AllowsColumnReorder="False">
+                            <GridViewColumn Header="Domain name" Width="250">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DomainName}" FontFamily="{StaticResource MonoFont}" Margin="4,0,0,0" ToolTip="{Binding NameToolTip}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Types" Width="72">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Types}" Foreground="{DynamicResource SubtleBrush}" ToolTip="{Binding Details}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Cached answer" Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Answer}" ToolTip="{Binding Details}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Cached" Width="84">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Age}" Foreground="{DynamicResource SubtleBrush}" ToolTip="{Binding TimeText}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="State" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource ToneChip}" ToolTip="{Binding StateToolTip}">
+                                            <TextBlock Text="{Binding State}" Style="{StaticResource ToneText}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="" Width="54">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource LinkButton}" Content="Clear" Click="ClearRow_Click" ToolTip="Clears this domain name from the cache" AutomationProperties.Name="Clear this domain name" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <TextBlock x:Name="EmptyText" Grid.Row="2" Style="{StaticResource Subtle}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="40,40,40,0" Visibility="Collapsed" />
+
+                <Border Grid.Row="3" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0" Padding="12,6" Background="{DynamicResource PanelBrush}">
+                    <DockPanel LastChildFill="False">
+                        <TextBlock x:Name="SummaryText" DockPanel.Dock="Left" Foreground="{DynamicResource SubtleBrush}" FontSize="12" VerticalAlignment="Center" />
+                        <Button x:Name="ClearSelectedButton" DockPanel.Dock="Right" Content="Clear the selected domain names" ui:Look.Glyph="&#xE894;" Click="ClearSelected_Click" Visibility="Hidden" />
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Actions -->
+
+        <ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <StackPanel>
+
+                <Border Style="{StaticResource Card}" Padding="16,14,16,16">
+                    <StackPanel>
+                        <TextBlock Text="Clear a domain name" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock Style="{StaticResource Subtle}" FontSize="12" TextTrimming="None" Margin="0,5,0,10" Text="Makes Acrylic forget what it has cached for a domain name, so that the next request for it is resolved again by your DNS servers. Everything else stays in the cache." />
+                        <TextBox x:Name="ClearBox" FontFamily="{StaticResource MonoFont}" ui:Look.Placeholder="example.com" TextChanged="ClearBox_TextChanged" KeyDown="ClearBox_KeyDown" AutomationProperties.Name="Domain name to clear" />
+                        <CheckBox x:Name="SubdomainsBox" Content="Also clear its subdomains" Margin="0,9,0,0" ToolTip="Clears www.example.com, mail.example.com and so on together with example.com" />
+                        <Button x:Name="ClearButton" Style="{StaticResource PrimaryButton}" Content="Clear from the cache" ui:Look.Glyph="&#xE894;" Click="Clear_Click" Margin="0,12,0,0" HorizontalAlignment="Stretch" MinHeight="32" />
+                        <TextBlock x:Name="ClearNote" Style="{StaticResource Subtle}" FontSize="12" TextTrimming="None" Margin="0,9,0,0" />
+                        <Border x:Name="ClearResultPanel" CornerRadius="6" Padding="11,7" Margin="0,10,0,0" Visibility="Collapsed">
+                            <TextBlock x:Name="ClearResultText" TextWrapping="Wrap" TextTrimming="None" />
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Card}" Padding="16,14,16,16" Margin="0,12,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Try a lookup" FontSize="15" FontWeight="SemiBold" />
+                        <TextBlock x:Name="LookupIntro" Style="{StaticResource Subtle}" FontSize="12" TextTrimming="None" Margin="0,5,0,10" />
+                        <DockPanel>
+                            <ComboBox x:Name="LookupType" DockPanel.Dock="Right" Width="76" Margin="6,0,0,0" AutomationProperties.Name="Query type" />
+                            <TextBox x:Name="LookupBox" FontFamily="{StaticResource MonoFont}" ui:Look.Placeholder="www.example.com" KeyDown="LookupBox_KeyDown" AutomationProperties.Name="Domain name to look up" />
+                        </DockPanel>
+                        <Button x:Name="LookupButton" Content="Look up" ui:Look.Glyph="&#xE721;" Click="Lookup_Click" Margin="0,10,0,0" HorizontalAlignment="Stretch" MinHeight="32" />
+                        <Border x:Name="LookupResultPanel" CornerRadius="6" Padding="11,7" Margin="0,10,0,0" Background="{DynamicResource GraySoftBrush}" Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock x:Name="LookupResultTitle" FontWeight="SemiBold" TextWrapping="Wrap" TextTrimming="None" />
+                                <TextBlock x:Name="LookupResultText" FontFamily="{StaticResource MonoFont}" FontSize="12" TextWrapping="Wrap" TextTrimming="None" Margin="0,4,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>
