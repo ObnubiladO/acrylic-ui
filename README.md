@@ -1,7 +1,11 @@
 # Acrylic UI
 
-A new desktop application for [Acrylic DNS Proxy](https://mayakron.altervista.org/support/acrylic/Home.htm), replacing
-the Acrylic UI it is distributed with. This repository holds the UI only: Acrylic itself is not here and is not changed.
+An unofficial replacement for the Acrylic UI application of
+[Acrylic DNS Proxy](https://mayakron.altervista.org/support/acrylic/Home.htm), the local DNS proxy for Windows written
+by Massimo Fabiano.
+
+This is an independent project and not part of the official Acrylic distribution. The repository holds the UI only:
+Acrylic itself is not here and is not changed.
 
 ![Cache tab](Screenshots/3-Cache.png)
 
@@ -39,6 +43,10 @@ empty file named `AcrylicSandbox.txt`. It then drives that private console inste
 - Acrylic keeps its address cache in memory and saves it only when it stops, so clearing a domain name restarts
   Acrylic for about a second. If the cache is configured to live in memory only, single names cannot be cleared.
 - Acrylic reads its files when it starts: after saving, the UI offers to restart it.
+- How far it has been tried: editing and saving both files, restarting the service and listing the cache have been used
+  with an installed Acrylic 2.2.1. Clearing single domain names has been tested with the console version of Acrylic,
+  which shares its code with the service. Installing and uninstalling the service from this UI have not been tested
+  yet.
 
 ## Building
 
@@ -49,6 +57,12 @@ empty file named `AcrylicSandbox.txt`. It then drives that private console inste
 
 `AcrylicUI.Tests\Data` holds a copy of the two files Acrylic 2.2.1 is distributed with, which the self-checks read.
 
-## License
+## Credits and license
 
-GNU General Public License, like Acrylic: see [License.txt](License.txt).
+Acrylic DNS Proxy is the work of Massimo Fabiano. This UI derives from it: the descriptions of the parameters come from
+its configuration file, the matching of hosts entries follows its code, and `AcrylicUI.Tests\Data` holds two of its
+files.
+
+The application icon is the one of Acrylic and has been designed by http://www.aha-soft.com/
+
+Released under the GNU General Public License, like Acrylic: see [License.txt](License.txt).
